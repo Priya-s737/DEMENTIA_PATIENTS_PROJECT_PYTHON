@@ -349,9 +349,10 @@ def render_sudoku_game(patient: Dict[str, Any], db=None, lang: str = "en"):
     # --------------------------------------------------------------------------
     # SENIOR KEYPAD (1, 2, 3, 4, CLEAR, HINT, UNDO)
     # --------------------------------------------------------------------------
+    cell_pos_label = f"வரிசை {sel_r+1}, நிரல் {sel_c+1}" if lang == "ta" else f"Row {sel_r+1}, Column {sel_c+1}"
     st.markdown(
         f"**{'கட்டத்தில் நிரப்ப எண்ணைத் தேர்ந்தெடுக்கவும்' if lang == 'ta' else 'Tap to place number in selected cell'} "
-        f"(வரிசை {sel_r+1}, நிரல் {sel_c+1}):**"
+        f"({cell_pos_label}):**"
     )
 
     k_cols = st.columns(6)

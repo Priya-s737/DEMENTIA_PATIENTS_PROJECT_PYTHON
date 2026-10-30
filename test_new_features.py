@@ -18,9 +18,9 @@ from database.mock_data import seed_database_if_empty
 
 def run_tests():
     print("==================================================")
-    print("[*] Testing Cocomelon Cartoon Storytelling & Animations")
+    print("[*] Testing Daily Animated Video Storytelling Suite")
     print("==================================================")
-    assert len(COCOMELON_EPISODES) == 4, f"Expected 4 episodes, got {len(COCOMELON_EPISODES)}"
+    assert len(COCOMELON_EPISODES) >= 4, f"Expected at least 4 episodes, got {len(COCOMELON_EPISODES)}"
     for idx, ep in enumerate(COCOMELON_EPISODES):
         assert ep["title_en"] and ep["title_ta"], f"Missing title in episode {idx}"
         assert ep["story_en"] and ep["story_ta"], f"Missing story in episode {idx}"
@@ -28,10 +28,9 @@ def run_tests():
         html_en = generate_cocomelon_stage_html(ep, lang="en")
         html_ta = generate_cocomelon_stage_html(ep, lang="ta")
         assert len(html_en) > 200, f"HTML stage too short for episode {idx}"
-        assert "cocomelon-character" in html_en, f"Missing Cocomelon character in episode {idx}"
-        assert "ladybug" in html_en, f"Missing ladybug mascot in episode {idx}"
-        assert "sun-face" in html_en, f"Missing smiling sun in episode {idx}"
-        print(f"✅ Episode {idx+1}: '{ep['title_en']}' / '{ep['title_ta']}' Cocomelon Animated Stage: PASS")
+        assert "video-player-frame" in html_en, f"Missing video player frame in episode {idx}"
+        assert "videoCanvas" in html_en, f"Missing video canvas in episode {idx}"
+        print(f"✅ Episode {idx+1}: '{ep['title_en']}' / '{ep['title_ta']}' Animated Video: PASS")
 
     print("\n==================================================")
     print("[*] Testing 100% Audible Tamil & English Speech Generation")

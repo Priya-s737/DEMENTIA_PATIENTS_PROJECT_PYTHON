@@ -13,27 +13,53 @@ from database.db_manager import DatabaseManager
 TRANSLATION_MAP = {
     "mother": {"en": "Mother", "ta": "அம்மா / தாய்", "detail_en": "Mother", "detail_ta": "அம்மா"},
     "mom": {"en": "Mother", "ta": "அம்மா / தாய்", "detail_en": "Mother", "detail_ta": "அம்மா"},
+    "அம்மா": {"en": "Mother", "ta": "அம்மா / தாய்", "detail_en": "Mother", "detail_ta": "அம்மா"},
+    "தாய்": {"en": "Mother", "ta": "அம்மா / தாய்", "detail_en": "Mother", "detail_ta": "அம்மா"},
     "father": {"en": "Father", "ta": "அப்பா / தந்தை", "detail_en": "Father", "detail_ta": "அப்பா"},
     "dad": {"en": "Father", "ta": "அப்பா / தந்தை", "detail_en": "Father", "detail_ta": "அப்பா"},
+    "அப்பா": {"en": "Father", "ta": "அப்பா / தந்தை", "detail_en": "Father", "detail_ta": "அப்பா"},
+    "தந்தை": {"en": "Father", "ta": "அப்பா / தந்தை", "detail_en": "Father", "detail_ta": "அப்பா"},
     "daughter": {"en": "Daughter", "ta": "மகள்", "detail_en": "Daughter", "detail_ta": "மகள்"},
+    "மகள்": {"en": "Daughter", "ta": "மகள்", "detail_en": "Daughter", "detail_ta": "மகள்"},
     "son": {"en": "Son", "ta": "மகன்", "detail_en": "Son", "detail_ta": "மகன்"},
+    "மகன்": {"en": "Son", "ta": "மகன்", "detail_en": "Son", "detail_ta": "மகன்"},
     "grandson": {"en": "Grandson", "ta": "பேரன்", "detail_en": "Grandson", "detail_ta": "பேரன்"},
+    "பேரன்": {"en": "Grandson", "ta": "பேரன்", "detail_en": "Grandson", "detail_ta": "பேரன்"},
     "granddaughter": {"en": "Granddaughter", "ta": "பேத்தி", "detail_en": "Granddaughter", "detail_ta": "பேத்தி"},
+    "பேத்தி": {"en": "Granddaughter", "ta": "பேத்தி", "detail_en": "Granddaughter", "detail_ta": "பேத்தி"},
     "wife": {"en": "Wife", "ta": "மனைவி", "detail_en": "Wife", "detail_ta": "மனைவி"},
+    "மனைவி": {"en": "Wife", "ta": "மனைவி", "detail_en": "Wife", "detail_ta": "மனைவி"},
     "husband": {"en": "Husband", "ta": "கணவர்", "detail_en": "Husband", "detail_ta": "கணவர்"},
+    "கணவர்": {"en": "Husband", "ta": "கணவர்", "detail_en": "Husband", "detail_ta": "கணவர்"},
     "dog": {"en": "Pet Dog", "ta": "வளர்ப்பு நாய்", "detail_en": "Pet Dog", "detail_ta": "வளர்ப்பு நாய்"},
     "lucky": {"en": "Pet Dog", "ta": "வளர்ப்பு நாய்", "detail_en": "Pet Dog", "detail_ta": "வளர்ப்பு நாய்"},
+    "நாய்": {"en": "Pet Dog", "ta": "வளர்ப்பு நாய்", "detail_en": "Pet Dog", "detail_ta": "வளர்ப்பு நாய்"},
     "taj mahal": {"en": "Taj Mahal", "ta": "தாஜ் மஹால்", "detail_en": "Taj Mahal", "detail_ta": "தாஜ் மஹால்"},
     "taj": {"en": "Taj Mahal", "ta": "தாஜ் மஹால்", "detail_en": "Taj Mahal", "detail_ta": "தாஜ் மஹால்"},
     "paint brush": {"en": "Paint Brush", "ta": "ஓவிய தூரிகை", "detail_en": "Paint Brush", "detail_ta": "ஓவிய தூரிகை"},
     "paintbrush": {"en": "Paint Brush", "ta": "ஓவிய தூரிகை", "detail_en": "Paint Brush", "detail_ta": "ஓவிய தூரிகை"},
     "தூரிகை": {"en": "Paint Brush", "ta": "ஓவிய தூரிகை", "detail_en": "Paint Brush", "detail_ta": "ஓவிய தூரிகை"},
     "toothbrush": {"en": "Toothbrush", "ta": "பல் துலக்கும் பிரஷ்", "detail_en": "Toothbrush", "detail_ta": "பல் துலக்கும் பிரஷ்"},
+    "பிரஷ்": {"en": "Toothbrush", "ta": "பல் துலக்கும் பிரஷ்", "detail_en": "Toothbrush", "detail_ta": "பல் துலக்கும் பிரஷ்"},
     "temple": {"en": "Meenakshi Temple", "ta": "மீனாட்சி அம்மன் கோவில்", "detail_en": "Temple", "detail_ta": "கோவில்"},
+    "கோவில்": {"en": "Meenakshi Temple", "ta": "மீனாட்சி அம்மன் கோவில்", "detail_en": "Temple", "detail_ta": "கோவில்"},
     "nature": {"en": "Nature & Greenery", "ta": "இயற்கை பசுமை காட்சி", "detail_en": "Nature", "detail_ta": "இயற்கை காட்சி"},
     "coffee": {"en": "Filter Coffee Tumbler", "ta": "காபி டம்ளர்", "detail_en": "Coffee Tumbler", "detail_ta": "காபி டம்ளர்"},
+    "காபி": {"en": "Filter Coffee Tumbler", "ta": "காபி டம்ளர்", "detail_en": "Coffee Tumbler", "detail_ta": "காபி டம்ளர்"},
     "flute": {"en": "Carnatic Flute", "ta": "புல்லாங்குழல்", "detail_en": "Flute", "detail_ta": "புல்லாங்குழல்"},
-    "spectacles": {"en": "Reading Glasses", "ta": "மூக்குக் கண்ணாடி", "detail_en": "Reading Glasses", "detail_ta": "மூக்குக் கண்ணாடி"}
+    "புல்லாங்குழல்": {"en": "Carnatic Flute", "ta": "புல்லாங்குழல்", "detail_en": "Flute", "detail_ta": "புல்லாங்குழல்"},
+    "spectacles": {"en": "Reading Glasses", "ta": "மூக்குக் கண்ணாடி", "detail_en": "Reading Glasses", "detail_ta": "மூக்குக் கண்ணாடி"},
+    "கண்ணாடி": {"en": "Reading Glasses", "ta": "மூக்குக் கண்ணாடி", "detail_en": "Reading Glasses", "detail_ta": "மூக்குக் கண்ணாடி"},
+    "tree": {"en": "Banyan Tree", "ta": "ஆலமரம்", "detail_en": "Tree", "detail_ta": "மரம்"},
+    "மரம்": {"en": "Banyan Tree", "ta": "ஆலமரம்", "detail_en": "Tree", "detail_ta": "மரம்"},
+    "pen": {"en": "Writing Pen", "ta": "பேனா", "detail_en": "Pen", "detail_ta": "பேனா"},
+    "பேனா": {"en": "Writing Pen", "ta": "பேனா", "detail_en": "Pen", "detail_ta": "பேனா"},
+    "pencil": {"en": "Pencil", "ta": "பென்சில்", "detail_en": "Pencil", "detail_ta": "பென்சில்"},
+    "பென்சில்": {"en": "Pencil", "ta": "பென்சில்", "detail_en": "Pencil", "detail_ta": "பென்சில்"},
+    "clock": {"en": "Wall Clock", "ta": "சுவர்க் கடிகாரம்", "detail_en": "Clock", "detail_ta": "கடிகாரம்"},
+    "கடிகாரம்": {"en": "Wall Clock", "ta": "சுவர்க் கடிகாரம்", "detail_en": "Clock", "detail_ta": "கடிகாரம்"},
+    "book": {"en": "Reading Book", "ta": "புத்தகம்", "detail_en": "Book", "detail_ta": "புத்தகம்"},
+    "புத்தகம்": {"en": "Reading Book", "ta": "புத்தகம்", "detail_en": "Book", "detail_ta": "புத்தகம்"}
 }
 
 class PersonalizationEngine:
@@ -52,6 +78,12 @@ class PersonalizationEngine:
                 if any(w in cleaned for w in key.split()):
                     return trans["ta"]
             return "குடும்ப நினைவுப் படம்"
+
+        if lang == "en" and not label.isascii() and len(label) > 0:
+            for key, trans in TRANSLATION_MAP.items():
+                if key in cleaned:
+                    return trans["en"]
+            return "Family Photo Memory"
             
         return label
 
@@ -64,6 +96,9 @@ class PersonalizationEngine:
         
         if lang == "ta" and (detail.isascii() or not detail):
             return "விருப்பமான நினைவு"
+
+        if lang == "en" and (not detail.isascii() or not detail):
+            return "Cherished Memory"
             
         return detail if detail else ("நினைவுப் படம்" if lang == "ta" else "Cherished Memory")
 

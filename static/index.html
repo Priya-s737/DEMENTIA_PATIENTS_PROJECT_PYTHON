@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NeuroCare • Vellore Cognitive Care Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/vtop_style.css">
+</head>
+<body>
+
+  <!-- Audio Element for Bilingual Story Video -->
+  <audio id="storyAudioElem" preload="auto"></audio>
+
+  <!-- Confetti Particle Canvas -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- 1. VTOP INSTITUTIONAL TOP BAR -->
+  <header class="vtop-top-bar">
+    <div class="vtop-top-bar-left">
+      <span>VELLORE COGNITIVE CARE INSTITUTE (VCCI)</span>
+      <span style="opacity: 0.4;">|</span>
+      <div class="vtop-badge-live">
+        <div class="dot"></div>
+        <span>CLINICAL TELEMETRY ACTIVE</span>
+      </div>
+      <span style="opacity: 0.4;">|</span>
+      <span class="role-badge-tag" id="currentRoleBadge">SENIOR MODE</span>
+    </div>
+    <div class="vtop-top-bar-right">
+      <button class="btn-switch-role" onclick="openAuthModal()" title="Switch User Role / Portal">
+        🔑 <span data-ta="போர்ட்டல் மாற்று / உள்நுழைவு" data-en="Switch Portal / Login">போர்ட்டல் மாற்று / உள்நுழைவு</span>
+      </button>
+      <button class="btn-font-size" onclick="toggleFontSize()" title="Senior Font Accessibility">
+        A- / A+
+      </button>
+      <button class="btn-lang-toggle" id="langToggleBtn" onclick="toggleLanguage()">
+        English
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. INSTITUTIONAL MAIN BRANDING & USER STATUS -->
+  <section class="vtop-main-header">
+    <div class="vtop-brand-area">
+      <div class="vtop-emblem">🧠</div>
+      <div class="vtop-title-group">
+        <h1>NEUROCARE CLINICAL PORTAL</h1>
+        <p data-ta="40+ நடுத்தர வயதினர் & முதியோருக்கான அறிவாற்றல் நலவாழ்வு தளம் • இருமொழி டிமென்ஷியா மையம்" data-en="Adult & Senior Cognitive Longevity Suite • Bilingual Dementia Care Platform">
+          Adult & Senior Cognitive Longevity Suite • Bilingual Dementia Care Platform
+        </p>
+      </div>
+    </div>
+
+    <!-- Active User Profile Pill -->
+    <div class="vtop-patient-pill" style="display: flex; align-items: center; gap: 14px;">
+      <div class="vtop-patient-avatar" id="activeUserAvatar">👴</div>
+      <div class="vtop-patient-info">
+        <h3 id="activeUserNameDisplay">Ramasamy Sundaram</h3>
+        <span id="activeUserSubDisplay">PID: NC-2026-01 • MMSE: 23.5/30</span>
+      </div>
+      <button class="btn-secondary" style="padding: 6px 12px; font-size: 13px; margin-left: 8px;" onclick="handleLogout()">
+        🚪 <span data-ta="வெளியேறு" data-en="Log Out">வெளியேறு</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 3. ROLE NAVIGATION BARS (DYNAMICALLY SWITCHED) -->
+
+  <!-- A. SENIOR NAVIGATION BAR -->
+  <nav class="vtop-nav-bar" id="seniorNavBar">
+    <button class="nav-tab-btn active" data-tab="senior_story" onclick="switchSeniorTab('senior_story')">
+      <span>🎬</span>
+      <span data-ta="தினசரி நகரும் படக் கதை" data-en="Daily Moving Picture Video">தினசரி நகரும் படக் கதை</span>
+    </button>
+    <button class="nav-tab-btn" data-tab="senior_games" onclick="switchSeniorTab('senior_games')">
+      <span>🎮</span>
+      <span data-ta="7 பிரத்யேக அறிவாற்றல் விளையாட்டுகள்" data-en="7 Specialized Cognitive Games">7 பிரத்யேக அறிவாற்றல் விளையாட்டுகள்</span>
+    </button>
+    <button class="nav-tab-btn" data-tab="senior_analytics" onclick="switchSeniorTab('senior_analytics')">
+      <span>📊</span>
+      <span data-ta="மருத்துவ அறிக்கை & மதிப்பீடு" data-en="Clinical Records & VTOP Sheet">மருத்துவ அறிக்கை & மதிப்பீடு</span>
+    </button>
+  </nav>
+
+  <!-- B. CAREGIVER NAVIGATION BAR -->
+  <nav class="vtop-nav-bar" id="caregiverNavBar" style="display: none;">
+    <button class="nav-tab-btn active" data-tab="cg_vault" onclick="switchCaregiverTab('cg_vault')">
+      <span>📸</span>
+      <span data-ta="நினைவுக் களஞ்சியம் & புகைப்படங்கள்" data-en="Reminiscence Memory Vault & Upload">நினைவுக் களஞ்சியம் & புகைப்படங்கள்</span>
+    </button>
+    <button class="nav-tab-btn" data-tab="cg_analytics" onclick="switchCaregiverTab('cg_analytics')">
+      <span>📈</span>
+      <span data-ta="முன்னேற்றப் புள்ளிவிவரங்கள்" data-en="Progress Analytics">முன்னேற்றப் புள்ளிவிவரங்கள்</span>
+    </button>
+    <button class="nav-tab-btn" data-tab="cg_report" onclick="switchCaregiverTab('cg_report')">
+      <span>📄</span>
+      <span data-ta="மருத்துவ அறிக்கை" data-en="Clinical Assessment Report">மருத்துவ அறிக்கை</span>
+    </button>
+    <button class="nav-tab-btn" data-tab="cg_preview" onclick="switchCaregiverTab('cg_preview')">
+      <span>🎮</span>
+      <span data-ta="பயிற்சிகளின் முன்னோட்டம்" data-en="Preview Specialized Games">பயிற்சிகளின் முன்னோட்டம்</span>
+    </button>
+  </nav>
+
+  <!-- C. CLINICAL SPECIALIST ADMIN NAVIGATION BAR -->
+  <nav class="vtop-nav-bar" id="adminNavBar" style="display: none;">
+    <button class="nav-tab-btn active" data-tab="adm_caregivers" onclick="switchAdminTab('adm_caregivers')">
+      <span>👨‍⚕️</span>
+      <span data-ta="பராமரிப்பாளர் செயல்பாடுகள் & பதிவேடு" data-en="Caregiver Process & Audit Logs">பராமரிப்பாளர் செயல்பாடுகள் & பதிவேடு</span>
+    </button>
+    <button class="nav-tab-btn" data-tab="adm_patients" onclick="switchAdminTab('adm_patients')">
+      <span>👵</span>
+      <span data-ta="நோயாளி மருத்துவ நிலை & முன்னேற்றம்" data-en="Patient Cognitive Progress & Telemetry">நோயாளி மருத்துவ நிலை & முன்னேற்றம்</span>
+    </button>
+    <button class="nav-tab-btn" data-tab="adm_research" onclick="switchAdminTab('adm_research')">
+      <span>📊</span>
+      <span data-ta="ஆய்வுக் கட்டுரை புள்ளிவிவர மையம் (RCT N=30)" data-en="Conference Research & RCT Benchmark (N=30)">ஆய்வுக் கட்டுரை புள்ளிவிவர மையம் (RCT N=30)</span>
+    </button>
+  </nav>
+
+  <!-- 4. MAIN WORKSPACE CONTAINER -->
+  <main class="vtop-container">
+
+    <!-- ====================================================================
+         VIEW 0: AUTHENTICATION & MULTI-ROLE LAUNCHPAD (MODAL / OVERLAY)
+         ==================================================================== -->
+    <div id="authGateModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 26, 44, 0.75); backdrop-filter: blur(8px); z-index: 9999; overflow-y: auto; padding: 20px;">
+      <div class="auth-container">
+        <!-- Hero Header -->
+        <div class="auth-hero-banner">
+          <h2>🧠 NeuroCare Longevity Suite</h2>
+          <p data-ta="40+ நடுத்தர வயதினர் & முதியோருக்கான அறிவாற்றல் நலவாழ்வு மற்றும் நினைவாற்றல் தளம்" data-en="Cognitive Longevity & Memory Wellness Suite for Adults (40+) & Dementia Patients">
+            Cognitive Longevity & Memory Wellness Suite for Adults (40+) & Dementia Patients
+          </p>
+        </div>
+
+        <!-- 3 Role Tabs -->
+        <div class="auth-tabs-bar">
+          <button class="auth-tab-btn active" onclick="switchAuthTab('tab_auth_senior')">
+            <span>🌿</span>
+            <span data-ta="நேரடி தொடக்கம் (1-Tap Play)" data-en="Senior Launchpad (1-Tap Play)">நேரடி தொடக்கம் (1-Tap Play)</span>
+          </button>
+          <button class="auth-tab-btn" onclick="switchAuthTab('tab_auth_caregiver')">
+            <span>👨‍⚕️</span>
+            <span data-ta="பராமரிப்பாளர் நுழைவு" data-en="Caregiver Portal Access">பராமரிப்பாளர் நுழைவு</span>
+          </button>
+          <button class="auth-tab-btn" onclick="switchAuthTab('tab_auth_admin')">
+            <span>🛡️</span>
+            <span data-ta="மருத்துவ நிபுணர் (Admin)" data-en="Clinical Specialist Login">மருத்துவ நிபுணர் (Admin)</span>
+          </button>
+        </div>
+
+        <!-- TAB 1: SENIOR 1-TAP LAUNCHPAD -->
+        <div id="tab_auth_senior" class="auth-tab-pane active">
+          <div style="background: #EFF6FF; border-left: 5px solid #2563EB; padding: 14px 20px; border-radius: 10px; margin-bottom: 20px;">
+            <h4 style="color: #1E3A8A; font-size: 16px; font-weight: 800;" data-ta="வணக்கம்! எவ்வித கடவுச்சொல்லும் இன்றி நேரடியாக 1-கிளிக்கில் பயிற்சிகளைத் தொடங்கலாம்!" data-en="Welcome! Begin daily cognitive fitness exercises directly with one tap, no password required.">
+              வணக்கம்! எவ்வித கடவுச்சொல்லும் இன்றி நேரடியாக 1-கிளிக்கில் பயிற்சிகளைத் தொடங்கலாம்!
+            </h4>
+            <p style="color: #475569; font-size: 13.5px; margin-top: 4px;" data-ta="நினைவாற்றல் ஜோடிகள், சுடோக்கு மற்றும் வாழ்வின் அனுபவ நினைவூட்டல் பயிற்சிகள் உங்களுக்காகத் தயார் ☕ 🌿" data-en="Memory Matching Pairs, Sudoku puzzles & Life Reminiscence exercises are ready for your daily routine ☕ 🌿">
+              நினைவாற்றல் ஜோடிகள், சுடோக்கு மற்றும் வாழ்வின் அனுபவ நினைவூட்டல் பயிற்சிகள் உங்களுக்காகத் தயார் ☕ 🌿
+            </p>
+          </div>
+
+          <label style="font-weight: 800; color: var(--vtop-navy); font-size: 15px;" data-ta="பயிற்சி செய்ய விரும்பும் முதியோர் சுயவிவரத்தைத் தேர்ந்தெடுக்கவும்:" data-en="Select Elder Profile for Today's Cognitive Routine:">
+            பயிற்சி செய்ய விரும்பும் முதியோர் சுயவிவரத்தைத் தேர்ந்தெடுக்கவும்:
+          </label>
+          <div class="patient-cards-grid" id="authPatientCardsMount">
+            <!-- Populated dynamically by app.js -->
+          </div>
+
+          <div style="display: flex; gap: 14px; margin-top: 24px; flex-wrap: wrap;">
+            <button class="btn-primary" style="flex: 1; padding: 14px; font-size: 16px; justify-content: center;" onclick="launchSeniorSession('ta')">
+              ▶️ தமிழில் பயிற்சிகளைத் தொடங்குங்கள் 🌿
+            </button>
+            <button class="btn-primary" style="flex: 1; padding: 14px; font-size: 16px; justify-content: center; background: #002B49;" onclick="launchSeniorSession('en')">
+              ▶️ Begin Exercises in English 🌟
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 2: CAREGIVER LOGIN & REGISTER -->
+        <div id="tab_auth_caregiver" class="auth-tab-pane">
+          <div style="max-width: 500px; margin: 0 auto;">
+            <h3 style="color: var(--vtop-navy); font-size: 19px; font-weight: 800; margin-bottom: 6px;">
+              👨‍⚕️ <span data-ta="பராமரிப்பாளர் உள்நுழைவு" data-en="Caregiver Portal Login">பராமரிப்பாளர் உள்நுழைவு</span>
+            </h3>
+            <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 20px;" data-ta="குடும்ப புகைப்படங்கள், நினைவுக் களஞ்சியம் மற்றும் மருத்துவ அறிக்கைகளை நிர்வகிக்க உள்நுழையவும்." data-en="Log in to manage family reminiscence photos, memory vault anchors, and clinical reports.">
+              குடும்ப புகைப்படங்கள், நினைவுக் களஞ்சியம் மற்றும் மருத்துவ அறிக்கைகளை நிர்வகிக்க உள்நுழையவும்.
+            </p>
+
+            <form id="caregiverLoginForm" onsubmit="handleCaregiverLogin(event)">
+              <div class="form-group">
+                <label data-ta="பயனர் பெயர்" data-en="Username">பயனர் பெயர்</label>
+                <input type="text" id="cgLoginUser" class="form-input" value="caregiver" required>
+              </div>
+              <div class="form-group">
+                <label data-ta="கடவுச்சொல்" data-en="Password">கடவுச்சொல்</label>
+                <input type="password" id="cgLoginPass" class="form-input" value="Caregiver@123" required>
+              </div>
+              <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 16px;">
+                🔑 <span data-ta="பராமரிப்பாளராக உள்நுழைக" data-en="Log In as Caregiver">பராமரிப்பாளராக உள்நுழைக</span>
+              </button>
+            </form>
+
+            <div style="background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 10px 14px; margin-top: 16px; font-size: 13px; color: #475569;">
+              💡 <strong>Demo Credentials:</strong> `caregiver` / `Caregiver@123`
+            </div>
+
+            <!-- Expandable Registration -->
+            <details style="margin-top: 20px; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px;">
+              <summary style="font-weight: 700; color: var(--vtop-blue); cursor: pointer;" data-ta="📝 புதிய பராமரிப்பாளர் கணக்கு பதிவு செய்க" data-en="📝 Register New Caregiver Account">
+                📝 புதிய பராமரிப்பாளர் கணக்கு பதிவு செய்க
+              </summary>
+              <form id="caregiverRegForm" onsubmit="handleCaregiverRegister(event)" style="margin-top: 14px;">
+                <div class="form-group">
+                  <label data-ta="முழு பெயர்" data-en="Full Name">முழு பெயர்</label>
+                  <input type="text" id="cgRegName" class="form-input" placeholder="e.g. Ananya Sharma" required>
+                </div>
+                <div class="form-group">
+                  <label data-ta="பயனர் பெயர்" data-en="Username">பயனர் பெயர்</label>
+                  <input type="text" id="cgRegUser" class="form-input" placeholder="e.g. ananya" required>
+                </div>
+                <div class="form-group">
+                  <label data-ta="கடவுச்சொல்" data-en="Password">கடவுச்சொல்</label>
+                  <input type="password" id="cgRegPass" class="form-input" placeholder="••••••••" required>
+                </div>
+                <div class="form-group">
+                  <label data-ta="தொலைபேசி எண்" data-en="Phone">தொலைபேசி எண்</label>
+                  <input type="text" id="cgRegPhone" class="form-input" placeholder="+91 98765 43210">
+                </div>
+                <button type="submit" class="btn-secondary" style="width: 100%; justify-content: center;">
+                  <span data-ta="கணக்கு பதிவு செய்க" data-en="Register Account">கணக்கு பதிவு செய்க</span>
+                </button>
+              </form>
+            </details>
+          </div>
+        </div>
+
+        <!-- TAB 3: CLINICAL SPECIALIST LOGIN -->
+        <div id="tab_auth_admin" class="auth-tab-pane">
+          <div style="max-width: 500px; margin: 0 auto;">
+            <h3 style="color: var(--vtop-navy); font-size: 19px; font-weight: 800; margin-bottom: 6px;">
+              🛡️ <span data-ta="மருத்துவ நிபுணர் உள்நுழைவு" data-en="Clinical Specialist & Analyst Login">மருத்துவ நிபுணர் உள்நுழைவு</span>
+            </h3>
+            <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 20px;" data-ta="ஆய்வுக் கட்டுரை புள்ளிவிவரங்கள், பராமரிப்பாளர் மேற்பார்வை மற்றும் முழு நோயாளி மதிப்பீடு." data-en="Access conference RCT statistics, caregiver oversight audit trails, and cohort telemetry.">
+              ஆய்வுக் கட்டுரை புள்ளிவிவரங்கள், பராமரிப்பாளர் மேற்பார்வை மற்றும் முழு நோயாளி மதிப்பீடு.
+            </p>
+
+            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+              <div class="form-group">
+                <label data-ta="நிர்வாகி பயனர் பெயர்" data-en="Specialist Username">நிர்வாகி பயனர் பெயர்</label>
+                <input type="text" id="adminLoginUser" class="form-input" value="admin" required>
+              </div>
+              <div class="form-group">
+                <label data-ta="கடவுச்சொல்" data-en="Password">கடவுச்சொல்</label>
+                <input type="password" id="adminLoginPass" class="form-input" value="admin123" required>
+              </div>
+              <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 16px; background: var(--vtop-navy);">
+                🛡️ <span data-ta="மருத்துவ நிபுணராக உள்நுழைக" data-en="Log In as Specialist">மருத்துவ நிபுணராக உள்நுழைக</span>
+              </button>
+            </form>
+
+            <div style="background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 10px 14px; margin-top: 16px; font-size: 13px; color: #475569;">
+              💡 <strong>Demo Credentials:</strong> `admin` / `admin123`
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: right; padding: 16px 36px; background: #F1F5F9; border-top: 1px solid var(--border-color);">
+          <button class="btn-secondary" onclick="closeAuthModal()">
+            <span data-ta="மூடுக" data-en="Close Window">மூடுக</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ====================================================================
+         VIEW 1: SENIOR PATIENT MODE
+         ==================================================================== -->
+    <div id="seniorPortalView">
+
+      <!-- SECTION 1A: DAILY MOVING PICTURE STORY VIDEO THEATER -->
+      <section id="sec_senior_story" class="portal-section active">
+        <!-- Today's Status Banner -->
+        <div style="background: linear-gradient(135deg, #002B49 0%, #001A2C 100%); 
+                    border-radius: 14px; padding: 16px 24px; color: white; margin-bottom: 20px; 
+                    border-left: 6px solid var(--vtop-accent-gold); display: flex; 
+                    justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+                    box-shadow: 0 4px 14px rgba(0, 43, 73, 0.15);">
+          <div>
+            <h2 style="color: #FEF08A; font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+              <span>🎬</span>
+              <span data-ta="தினசரி நகரும் படக் கதை அரங்கம்" data-en="Daily Moving Picture Video Theater">தினசரி நகரும் படக் கதை அரங்கம்</span>
+            </h2>
+            <p style="color: #CBD5E1; font-size: 13.5px; margin-top: 3px; font-weight: 500;">
+              📅 <span id="portalTodayDate">வியாழக்கிழமை, 22 அக்டோபர் 2026</span> &nbsp;•&nbsp; 
+              <span style="color: #34D399; font-weight: 700;" data-ta="தானியங்கி நகரும் படம் இயங்குகிறது (Auto-Running Motion Video)" data-en="Auto-Playing Moving Picture Video (No clicks needed)">
+                தானியங்கி நகரும் படம் இயங்குகிறது (Auto-Running Motion Video)
+              </span>
+            </p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="btn-primary" style="padding: 8px 16px; font-size: 14px;" onclick="switchSeniorTab('senior_games')">
+              🎮 <span data-ta="பயிற்சிகளுக்குச் செல்லவும்" data-en="Go to Cognitive Games">பயிற்சிகளுக்குச் செல்லவும்</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 7-Day Quick Switcher Grid -->
+        <div class="day-selector-grid" id="daySelectorMount">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+
+        <!-- Cinema Moving Picture Video Frame -->
+        <div class="cinema-frame" id="cinemaVideoContainer">
+          <div class="canvas-container" onclick="playerInstance.togglePlay()">
+            <canvas id="cinemaCanvas"></canvas>
+
+            <!-- Top Cinema Overlay -->
+            <div class="cinema-top-overlay">
+              <div class="pill-rec-live">
+                <div class="rec-pulse-dot"></div>
+                <span>MOVING PICTURE VIDEO</span>
+              </div>
+              <div class="pill-day-theme" id="cinemaThemeBadge">
+                <span>🌟</span> <span>வியாழன் • அனுபவ முதிர்ச்சி</span>
+              </div>
+            </div>
+
+            <!-- Synchronized Subtitles (Letterbox) -->
+            <div class="cinema-subtitle-overlay">
+              <div class="cinema-subtitle-box" id="cinemaSubtitleBox">
+                கம்பீரமாக நிற்கும் ஆலமரம் போல உங்கள் வாழ்வின் அனுபவங்கள் உறுதியானவை.
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Player Controls Bar -->
+          <div class="cinema-controls-bar">
+            <button class="btn-video-ctrl" id="btnCinemaPlay" onclick="playerInstance.togglePlay()" title="Play/Pause">
+              ❚❚
+            </button>
+            <div class="video-time-code" id="cinemaTimeCode">00:00 / 00:45</div>
+
+            <!-- Clickable Scrubber Track -->
+            <div class="video-scrubber-track" id="cinemaScrubberTrack">
+              <div class="video-scrubber-fill" id="cinemaProgressFill"></div>
+              <div class="video-scrubber-thumb" id="cinemaScrubberThumb"></div>
+            </div>
+
+            <button class="btn-video-ctrl" id="btnCinemaMute" onclick="playerInstance.toggleMute()" title="Mute/Unmute">
+              🔊
+            </button>
+          </div>
+        </div>
+
+        <!-- Daily Philosophical Reflection Card -->
+        <div class="story-text-card">
+          <div class="story-text-header">
+            <h3 id="storyCardTitle"><span>🌳</span> ஆலமரத்தின் கம்பீரம்</h3>
+            <span class="story-tag" data-ta="தினசரி உத்வேகம்" data-en="Daily Inspiration">தினசரி உத்வேகம்</span>
+          </div>
+          <div class="story-quote-box" id="storyCardQuote">
+            "ஆலமரம் பல்லாண்டு காலம் வெயில், மழை தாங்கி நிற்பது போல உங்கள் வாழ்வின் அனுபவங்கள் மதிப்புமிக்கவை."
+          </div>
+          <p class="story-narrative" id="storyCardText">
+            வாழ்வின் ஒவ்வொரு காலகட்டத்திலும் நாம் கற்றுக்கொண்ட அனுபவங்கள் நம்மை ஒரு கம்பீரமான ஆலமரமாக மாற்றுகின்றன.
+          </p>
+        </div>
+      </section>
+
+
+      <!-- SECTION 1B: SENIOR 7 COGNITIVE GAMES SUITE -->
+      <section id="sec_senior_games" class="portal-section" style="display: none;">
+        <div class="neat-card" style="margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 style="font-size: 20px; font-weight: 800; color: var(--vtop-navy);">
+                🎮 <span data-ta="டிமென்ஷியா & நினைவாற்றல் 7 பிரத்யேக மருத்துவ விளையாட்டுகள்" data-en="7 Specialized Dementia & Memory Rehabilitation Games">டிமென்ஷியா & நினைவாற்றல் 7 பிரத்யேக மருத்துவ விளையாட்டுகள்</span>
+              </h2>
+              <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;" data-ta="அறிவாற்றல் பகுதிகளைத் தூண்டும் வகையில் வடிவமைக்கப்பட்ட சிறப்புப் பயிற்சிகள்:" data-en="Scientifically designed activities targeting executive function, memory span, orientation & naming:">
+                அறிவாற்றல் பகுதிகளைத் தூண்டும் வகையில் வடிவமைக்கப்பட்ட சிறப்புப் பயிற்சிகள்:
+              </p>
+            </div>
+            <button class="btn-secondary" onclick="switchSeniorTab('senior_story')">
+              📖 <span data-ta="வாழ்வின் உத்வேகக் கதை பார்க்க" data-en="View Inspiring Story">வாழ்வின் உத்வேகக் கதை பார்க்க</span>
+            </button>
+          </div>
+
+          <!-- 7 Games Selector Subnav -->
+          <div class="game-subnav-tabs" style="margin-top: 18px;">
+            <button class="game-tab-pill active" onclick="activateGame('sudoku')">
+              🧩 <span data-ta="1. சுடோக்கு புதிர் (4x4)" data-en="1. Senior Sudoku">1. சுடோக்கு புதிர் (4x4)</span>
+            </button>
+            <button class="game-tab-pill" onclick="activateGame('pairs')">
+              🃏 <span data-ta="2. ஜோடி நினைவாற்றல்" data-en="2. Memory Matching Pairs">2. ஜோடி நினைவாற்றல்</span>
+            </button>
+            <button class="game-tab-pill" onclick="activateGame('photo_recall')">
+              🖼️ <span data-ta="3. குடும்ப நினைவுப் படம்" data-en="3. Familiar Photo Recall">3. குடும்ப நினைவுப் படம்</span>
+            </button>
+            <button class="game-tab-pill" onclick="activateGame('memory_increment')">
+              🔢 <span data-ta="4. நினைவுத்திறன் அதிகரிப்பு" data-en="4. Memory Span Increment">4. நினைவுத்திறன் அதிகரிப்பு</span>
+            </button>
+            <button class="game-tab-pill" onclick="activateGame('stroop')">
+              🎯 <span data-ta="5. வண்ணக் கவனம் (Stroop)" data-en="5. Color Stroop Focus">5. வண்ணக் கவனம் (Stroop)</span>
+            </button>
+            <button class="game-tab-pill" onclick="activateGame('orientation')">
+              🕒 <span data-ta="6. காலம் & இடம் (Orientation)" data-en="6. Reality Orientation">6. காலம் & இடம் (Orientation)</span>
+            </button>
+            <button class="game-tab-pill" onclick="activateGame('language')">
+              🏷️ <span data-ta="7. பொருள் அறிதல் (Naming)" data-en="7. Semantic Object Naming">7. பொருள் அறிதல் (Naming)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mount Containers for all 7 Games -->
+        <div id="game_mount_sudoku" class="game-panel-wrap active">
+          <div class="neat-card">
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 14px;">
+              🧩 <span data-ta="முதியோர் சுடோக்கு புதிர் (Mini 4x4 Grid)" data-en="Senior Sudoku Challenge (Mini 4x4 Grid)">முதியோர் சுடோக்கு புதிர் (Mini 4x4 Grid)</span>
+            </h3>
+            <div id="sudokuGameMount"></div>
+          </div>
+        </div>
+
+        <div id="game_mount_pairs" class="game-panel-wrap" style="display: none;">
+          <div class="neat-card">
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 14px;">
+              🃏 <span data-ta="ஜோடி நினைவாற்றல் கார்டுகள்" data-en="Cultural Memory Matching Pairs">ஜோடி நினைவாற்றல் கார்டுகள்</span>
+            </h3>
+            <div id="memoryPairsMount"></div>
+          </div>
+        </div>
+
+        <div id="game_mount_photo_recall" class="game-panel-wrap" style="display: none;">
+          <div class="neat-card">
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 14px;">
+              🖼️ <span data-ta="குடும்ப புகைப்பட நினைவூட்டல் பயிற்சி" data-en="Familiar Face & Family Photo Recall">குடும்ப புகைப்பட நினைவூட்டல் பயிற்சி</span>
+            </h3>
+            <div id="faceRecallMount"></div>
+          </div>
+        </div>
+
+        <div id="game_mount_memory_increment" class="game-panel-wrap" style="display: none;">
+          <div class="neat-card">
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 14px;">
+              🔢 <span data-ta="நினைவுத்திறன் அதிகரிப்புப் பயிற்சி (Memory Span Increment)" data-en="Memory Span Increment Challenge">நினைவுத்திறன் அதிகரிப்புப் பயிற்சி (Memory Span Increment)</span>
+            </h3>
+            <div id="memoryIncrementMount"></div>
+          </div>
+        </div>
+
+        <div id="game_mount_stroop" class="game-panel-wrap" style="display: none;">
+          <div class="neat-card">
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 14px;">
+              🎯 <span data-ta="வண்ணக் கவனக்குவிப்புப் பயிற்சி (Stroop Color Inhibition)" data-en="Color Stroop Attention & Focus Task">வண்ணக் கவனக்குவிப்புப் பயிற்சி (Stroop Color Inhibition)</span>
+            </h3>
+            <div id="stroopGameMount"></div>
+          </div>
+        </div>
+
+        <div id="game_mount_orientation" class="game-panel-wrap" style="display: none;">
+          <div class="neat-card">
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 14px;">
+              🕒 <span data-ta="காலம் மற்றும் இருப்பிட விழிப்புணர்வு (Reality Orientation)" data-en="Temporal & Spatial Reality Orientation">காலம் மற்றும் இருப்பிட விழிப்புணர்வு (Reality Orientation)</span>
+            </h3>
+            <div id="orientationMount"></div>
+          </div>
+        </div>
+
+        <div id="game_mount_language" class="game-panel-wrap" style="display: none;">
+          <div class="neat-card">
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 14px;">
+              🏷️ <span data-ta="பொருள் மற்றும் வகைப்பாடு அறிதல் (Semantic Language Match)" data-en="Language & Semantic Object Naming">பொருள் மற்றும் வகைப்பாடு அறிதல் (Semantic Language Match)</span>
+            </h3>
+            <div id="languageMount"></div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- SECTION 1C: CLINICAL RECORDS & TELEMETRY -->
+      <section id="sec_senior_analytics" class="portal-section" style="display: none;">
+        <div class="metrics-row">
+          <div class="vtop-metric-card">
+            <div class="metric-label" data-ta="அடிப்படை MMSE மதிப்பெண்" data-en="Baseline MMSE Score">அடிப்படை MMSE மதிப்பெண்</div>
+            <div class="metric-value" id="seniorMmseVal">23.5 / 30</div>
+            <div class="metric-status" data-ta="Mild Cognitive Impairment" data-en="Mild Cognitive Impairment">Mild Cognitive Impairment</div>
+          </div>
+          <div class="vtop-metric-card">
+            <div class="metric-label" data-ta="தற்போதைய தகவமைப்பு நிலை" data-en="Current Adaptive Level">தற்போதைய தகவமைப்பு நிலை</div>
+            <div class="metric-value" id="seniorLevelVal">Level 5 / 5</div>
+            <div class="metric-status" data-ta="உச்சபட்ச அறிவாற்றல் திறன்" data-en="Optimal Cognitive Challenge">Optimal Challenge</div>
+          </div>
+          <div class="vtop-metric-card">
+            <div class="metric-label" data-ta="பரிந்துரைக்கப்பட்ட பயிற்சி" data-en="Recommended Routine">பரிந்துரைக்கப்பட்ட பயிற்சி</div>
+            <div class="metric-value" style="font-size: 20px;">சுடோக்கு & ஜோடி</div>
+            <div class="metric-status" data-ta="நினைவாற்றல் நலம்" data-en="Memory Wellness">Memory Wellness</div>
+          </div>
+          <div class="vtop-metric-card">
+            <div class="metric-label" data-ta="பதிவான பயிற்சி அமர்வுகள்" data-en="Logged Sessions">பதிவான பயிற்சி அமர்வுகள்</div>
+            <div class="metric-value" id="seniorSessionCount">28</div>
+            <div class="metric-status" data-ta="100% தொடர்ச்சி" data-en="High Adherence">100% Adherence</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+
+    <!-- ====================================================================
+         VIEW 2: CAREGIVER PORTAL
+         ==================================================================== -->
+    <div id="caregiverPortalView" style="display: none;">
+
+      <!-- Caregiver Patient Header Banner -->
+      <div style="background: linear-gradient(135deg, #1E293B, #0F172A); padding: 18px 24px; border-radius: 14px; border-left: 6px solid #3B82F6; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+        <div>
+          <div style="font-size: 18px; font-weight: 800; color: #F8FAFC;">
+            👤 <span data-ta="பராமரிக்கப்படும் முதியவர்:" data-en="Assigned Elder:">பராமரிக்கப்படும் முதியவர்:</span>
+            <span style="color: #60A5FA;" id="cgAssignedElderName">Ramasamy Sundaram</span>
+          </div>
+          <div style="font-size: 13.5px; color: #94A3B8; margin-top: 4px;" id="cgAssignedElderMeta">
+            வயது: 74 | நிலை: 🌟 Level 5/5 | Mild Cognitive Impairment (MCI)
+          </div>
+        </div>
+        <button class="btn-primary" onclick="launchElderFromCaregiver()">
+          👵 <span data-ta="முதியோர் பயிற்சியைத் தொடங்கவும்" data-en="Launch Elder Training Session">முதியோர் பயிற்சியைத் தொடங்கவும்</span>
+        </button>
+      </div>
+
+      <!-- TAB 2A: MEMORY VAULT & LOCAL FILE UPLOAD -->
+      <section id="sec_cg_vault" class="portal-section active">
+        <div class="neat-card">
+          <h3 style="font-size: 19px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 6px;">
+            🖼️ <span data-ta="குடும்ப நினைவுக் களஞ்சியம் & புகைப்படங்கள்" data-en="Personal Reminiscence Memory Vault">குடும்ப நினைவுக் களஞ்சியம் & புகைப்படங்கள்</span>
+          </h3>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px;" data-ta="குடும்ப புகைப்படங்கள், விருப்பமான இடங்கள் மற்றும் பொருட்களை உங்கள் கணினியில் இருந்து பதிவேற்றவும்:" data-en="Upload your actual family photos, memories, hometown places, or routine steps directly from your computer:">
+            குடும்ப புகைப்படங்கள், விருப்பமான இடங்கள் மற்றும் பொருட்களை உங்கள் கணினியில் இருந்து பதிவேற்றவும்:
+          </p>
+
+          <!-- Upload Form -->
+          <form id="memoryUploadForm" onsubmit="handleMemoryUpload(event)" style="background: #F8FAFC; border: 1.5px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+            <h4 style="font-size: 15px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 14px;">
+              ➕ <span data-ta="புதிய குடும்ப புகைப்படம் சேர்க்க" data-en="Add New Family Photo / Cherished Memory">புதிய குடும்ப புகைப்படம் சேர்க்க</span>
+            </h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label data-ta="பிரிவு" data-en="Memory Category">பிரிவு</label>
+                <select id="memCat" class="form-select">
+                  <option value="family">Family / குடும்பம்</option>
+                  <option value="place">Place / ஊர் & இடம்</option>
+                  <option value="routine">Routine / அன்றாட பழக்கம்</option>
+                  <option value="hobby">Hobby / பொழுதுபோக்கு</option>
+                  <option value="object">Object / பொருள்</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label data-ta="புகைப்படக் கோப்பு (.png, .jpg, .jpeg)" data-en="Upload Local Image File (.png, .jpg, .jpeg)">புகைப்படக் கோப்பு</label>
+                <input type="file" id="memFile" class="form-input" accept="image/png, image/jpeg, image/webp">
+              </div>
+              <div class="form-group">
+                <label data-ta="பெயர் / தலைப்பு (English)" data-en="Name / Title (English)">Name / Title (English)</label>
+                <input type="text" id="memLabelEn" class="form-input" placeholder="e.g. Arun (Son)">
+              </div>
+              <div class="form-group">
+                <label data-ta="பெயர் / தலைப்பு (தமிழ்)" data-en="Name / Title (Tamil)">பெயர் / தலைப்பு (தமிழ்)</label>
+                <input type="text" id="memLabelTa" class="form-input" placeholder="எ.கா: அருண் (மூத்த மகன்)">
+              </div>
+              <div class="form-group">
+                <label data-ta="விளக்கம் / உறவுமுறை (English)" data-en="Relation Cue (English)">Relation Cue (English)</label>
+                <input type="text" id="memDetailEn" class="form-input" placeholder="e.g. Your elder son living in Chennai">
+              </div>
+              <div class="form-group">
+                <label data-ta="விளக்கம் / உறவுமுறை (தமிழ்)" data-en="Relation Cue (Tamil)">விளக்கம் / உறவுமுறை (தமிழ்)</label>
+                <input type="text" id="memDetailTa" class="form-input" placeholder="எ.கா: சென்னையில் வசிக்கும் உங்கள் மகன்">
+              </div>
+            </div>
+            <button type="submit" class="btn-primary" style="margin-top: 10px;">
+              💾 <span data-ta="புகைப்படத்தைச் சேமிக்கவும்" data-en="Save Photo to Patient Vault">புகைப்படத்தைச் சேமிக்கவும்</span>
+            </button>
+          </form>
+
+          <!-- Current Gallery -->
+          <h4 style="font-size: 16px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 12px;">
+            📸 <span data-ta="சேமிக்கப்பட்ட நினைவுக் களஞ்சியம்" data-en="Current Memory Gallery">சேமிக்கப்பட்ட நினைவுக் களஞ்சியம்</span>
+          </h4>
+          <div class="memory-gallery-grid" id="caregiverMemoryGalleryMount">
+            <!-- Rendered by app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2B: PROGRESS ANALYTICS -->
+      <section id="sec_cg_analytics" class="portal-section" style="display: none;">
+        <div class="neat-card">
+          <h3 style="font-size: 19px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 16px;">
+            📈 <span data-ta="நீண்டகால முன்னேற்றப் புள்ளிவிவரங்கள்" data-en="Longitudinal Performance & Analytics">நீண்டகால முன்னேற்றப் புள்ளிவிவரங்கள்</span>
+          </h3>
+          <div class="metrics-row" style="margin-bottom: 24px;">
+            <div class="vtop-metric-card">
+              <div class="metric-label" data-ta="மொத்த அமர்வுகள்" data-en="Total Sessions">மொத்த அமர்வுகள்</div>
+              <div class="metric-value">28</div>
+            </div>
+            <div class="vtop-metric-card">
+              <div class="metric-label" data-ta="சராசரி துல்லியம்" data-en="Mean Accuracy">சராசரி துல்லியம்</div>
+              <div class="metric-value">84.5%</div>
+            </div>
+            <div class="vtop-metric-card">
+              <div class="metric-label" data-ta="சராசரி பதில் வேகம்" data-en="Mean Reaction Latency">சராசரி பதில் வேகம்</div>
+              <div class="metric-value">2.42s</div>
+            </div>
+          </div>
+          <table class="vtop-table" id="cgSessionHistoryTable">
+            <thead>
+              <tr>
+                <th>Session ID</th>
+                <th>Domain / பிரிவு</th>
+                <th>Accuracy / துல்லியம்</th>
+                <th>Response Time / வேகம்</th>
+                <th>Date / தேதி</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rendered by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 2C: CLINICAL REPORT -->
+      <section id="sec_cg_report" class="portal-section" style="display: none;">
+        <div class="neat-card">
+          <h3 style="font-size: 19px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 16px;">
+            📄 <span data-ta="மருத்துவ மதிப்பீட்டு அறிக்கை" data-en="Export Clinical Assessment Report">மருத்துவ மதிப்பீட்டு அறிக்கை</span>
+          </h3>
+          <div style="background: #F8FAFC; border: 1.5px solid var(--border-color); border-radius: 12px; padding: 24px; font-family: monospace; white-space: pre-wrap;" id="clinicalReportTextView">
+# NEUROCARE CLINICAL ASSESSMENT REPORT
+Patient Name: Ramasamy Sundaram | Age: 74 | Condition: Mild Cognitive Impairment (MCI)
+Baseline MMSE: 23.5/30 | Current Adaptive Level: Level 5/5
+Assigned Caregiver: Primary Caregiver
+Clinical Adherence: 94.2% across 28 days
+
+Cognitive Domain Accuracies:
+- Episodic Memory (Face Recall): 88.5% (Gain: +18.5%)
+- Attention & Stroop Focus: 82.0% (Latency: 2.1s)
+- Reality Orientation: 90.0%
+- Semantic Naming: 85.5%
+          </div>
+          <button class="btn-primary" style="margin-top: 18px;" onclick="downloadClinicalReport()">
+            📥 <span data-ta="மருத்துவ அறிக்கையைப் பதிவிறக்குக (.MD)" data-en="Download Report (.MD)">மருத்துவ அறிக்கையைப் பதிவிறக்குக (.MD)</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- TAB 2D: PREVIEW SPECIALIZED GAMES -->
+      <section id="sec_cg_preview" class="portal-section" style="display: none;">
+        <div class="neat-card">
+          <h3 style="font-size: 19px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 12px;">
+            🎮 <span data-ta="பராமரிப்பாளர் விளையாட்டுகள் முன்னோட்டம்" data-en="Caregiver Games Preview & Quality Check">பராமரிப்பாளர் விளையாட்டுகள் முன்னோட்டம்</span>
+          </h3>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 16px;" data-ta="முதியவருக்குப் பயிற்சி தொடங்குவதற்கு முன் எந்தப் பயிற்சியையும் முன்னோட்டமாகச் சோதிக்கலாம்:" data-en="Caregivers can test and verify any game activity before assigning it to the elder:">
+            முதியவருக்குப் பயிற்சி தொடங்குவதற்கு முன் எந்தப் பயிற்சியையும் முன்னோட்டமாகச் சோதிக்கலாம்:
+          </p>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button class="btn-secondary" onclick="previewGameInCaregiver('sudoku')">🧩 Sudoku 4x4</button>
+            <button class="btn-secondary" onclick="previewGameInCaregiver('pairs')">🃏 Memory Pairs</button>
+            <button class="btn-secondary" onclick="previewGameInCaregiver('photo_recall')">🖼️ Photo Recall</button>
+            <button class="btn-secondary" onclick="previewGameInCaregiver('memory_increment')">🔢 Memory Span</button>
+            <button class="btn-secondary" onclick="previewGameInCaregiver('stroop')">🎯 Stroop Focus</button>
+            <button class="btn-secondary" onclick="previewGameInCaregiver('orientation')">🕒 Orientation</button>
+            <button class="btn-secondary" onclick="previewGameInCaregiver('language')">🏷️ Semantic Naming</button>
+          </div>
+          <div id="caregiverPreviewMount" style="margin-top: 24px;"></div>
+        </div>
+      </section>
+
+    </div>
+
+
+    <!-- ====================================================================
+         VIEW 3: CLINICAL SPECIALIST / ADMIN PORTAL
+         ==================================================================== -->
+    <div id="adminPortalView" style="display: none;">
+
+      <!-- Top KPI Metrics Overview -->
+      <div class="metrics-row" style="margin-bottom: 24px;">
+        <div class="vtop-metric-card">
+          <div class="metric-label" data-ta="👨‍⚕️ பராமரிப்பாளர்கள்" data-en="Active Caregivers">👨‍⚕️ பராமரிப்பாளர்கள்</div>
+          <div class="metric-value" id="kpiCaregiversCount">3</div>
+          <div class="metric-status" data-ta="அங்கீகரிக்கப்பட்டது" data-en="Verified Staff">Verified Staff</div>
+        </div>
+        <div class="vtop-metric-card">
+          <div class="metric-label" data-ta="👵 பதிவான நோயாளிகள்" data-en="Registered Patients">👵 பதிவான நோயாளிகள்</div>
+          <div class="metric-value" id="kpiPatientsCount">3</div>
+          <div class="metric-status" data-ta="முழு கோஹார்ட்" data-en="Active Cohort">Active Cohort</div>
+        </div>
+        <div class="vtop-metric-card">
+          <div class="metric-label" data-ta="🎮 பயிற்சி அமர்வுகள்" data-en="Cognitive Sessions">🎮 பயிற்சி அமர்வுகள்</div>
+          <div class="metric-value" id="kpiSessionsCount">84</div>
+          <div class="metric-status" data-ta="Clinical Telemetry" data-en="Clinical Telemetry">Clinical Telemetry</div>
+        </div>
+        <div class="vtop-metric-card">
+          <div class="metric-label" data-ta="📋 செயல் பதிவுகள்" data-en="Audit Logged Events">📋 செயல் பதிவுகள்</div>
+          <div class="metric-value" id="kpiAuditCount">50+</div>
+          <div class="metric-status" data-ta="நேரலை தணிக்கை" data-en="Live Audit Trail">Live Audit Trail</div>
+        </div>
+      </div>
+
+      <!-- TAB 3A: CAREGIVER ACTIONS & AUDIT LOGS -->
+      <section id="sec_adm_caregivers" class="portal-section active">
+        <div class="neat-card" style="margin-bottom: 24px;">
+          <h3 style="font-size: 19px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 14px;">
+            👥 <span data-ta="பதிவுசெய்த பராமரிப்பாளர்கள் பட்டியல்" data-en="Registered Caregiver Roster">பதிவுசெய்த பராமரிப்பாளர்கள் பட்டியல்</span>
+          </h3>
+          <table class="vtop-table" id="admCaregiverRosterTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Full Name / பெயர்</th>
+                <th>Phone / தொலைபேசி</th>
+                <th>Assigned Patients</th>
+                <th>Joined / தேதி</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rendered by app.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="neat-card">
+          <h3 style="font-size: 19px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 14px;">
+            📋 <span data-ta="பராமரிப்பாளர் நேரலை செயல் பதிவேடு (Live Audit Logs)" data-en="Caregiver Live Audit Logs & Event Trail">பராமரிப்பாளர் நேரலை செயல் பதிவேடு (Live Audit Logs)</span>
+          </h3>
+          <table class="vtop-table" id="admAuditLogsTable">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>User / Role</th>
+                <th>Action Type</th>
+                <th>Event Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rendered by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 3B: PATIENT COGNITIVE STATE & TELEMETRY -->
+      <section id="sec_adm_patients" class="portal-section" style="display: none;">
+        <div class="neat-card">
+          <h3 style="font-size: 19px; font-weight: 800; color: var(--vtop-navy); margin-bottom: 14px;">
+            👵 <span data-ta="முழு நோயாளி கோஹார்ட் விவரங்கள்" data-en="Comprehensive Patient Cohort Directory">முழு நோயாளி கோஹார்ட் விவரங்கள்</span>
+          </h3>
+          <table class="vtop-table" id="admPatientCohortTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Patient Name</th>
+                <th>Age</th>
+                <th>Diagnosis / Condition</th>
+                <th>Baseline MMSE</th>
+                <th>Current Level</th>
+                <th>Caregiver</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rendered by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 3C: CONFERENCE RESEARCH BENCHMARK (RCT N=30) -->
+      <section id="sec_adm_research" class="portal-section" style="display: none;">
+        <div class="neat-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+            <div>
+              <h3 style="font-size: 20px; font-weight: 800; color: var(--vtop-navy);">
+                📊 <span data-ta="ஆய்வுக் கட்டுரை புள்ளிவிவர மையம் (RCT Benchmark N=30)" data-en="Conference Publication & RCT Statistical Benchmark (N=30)">ஆய்வுக் கட்டுரை புள்ளிவிவர மையம் (RCT Benchmark N=30)</span>
+              </h3>
+              <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;">
+                NeuroCare Clinical Cognitive Assessment Platform | Randomized Controlled Trial Benchmark
+              </p>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid var(--color-success); color: #047857; padding: 6px 14px; border-radius: 8px; font-weight: 800; font-size: 13px;">
+              p &lt; 0.001 • Highly Significant
+            </div>
+          </div>
+
+          <table class="vtop-table" id="admRctStatsTable">
+            <thead>
+              <tr>
+                <th>Cognitive Domain</th>
+                <th>Pre-Test (M ± SD)</th>
+                <th>Post-Test (M ± SD)</th>
+                <th>Mean Gain (Δ)</th>
+                <th>t-stat</th>
+                <th>p-value</th>
+                <th>Cohen's d</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rendered by app.js -->
+            </tbody>
+          </table>
+
+          <h4 style="font-size: 16px; font-weight: 800; color: var(--vtop-navy); margin-top: 24px; margin-bottom: 8px;">
+            📄 <span data-ta="ஆய்வுக் கட்டுரைக்கான LaTeX அட்டவணை" data-en="LaTeX Table for Conference Paper (IEEE/ACM Format)">ஆய்வுக் கட்டுரைக்கான LaTeX அட்டவணை</span>
+          </h4>
+          <pre class="latex-container" id="admLatexCodeView">
+% Loading LaTeX Table...
+          </pre>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- 5. INSTITUTIONAL FOOTER -->
+  <footer style="margin-top: auto; background: var(--vtop-navy-dark); color: #94A3B8; padding: 18px 28px; font-size: 13px; border-top: 2px solid var(--vtop-accent-gold); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+    <div>
+      © 2026 NeuroCare Clinical Cognitive Longevity Suite • Vellore Cognitive Care Institute (VCCI)
+    </div>
+    <div style="color: #FEF08A; font-weight: 600;">
+      Strict Bilingual Localization • Pure Tamil & Pure English
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/js/video_player.js"></script>
+  <script src="/static/js/games.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
